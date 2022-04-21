@@ -1,10 +1,13 @@
-//CONSTANTS
+//CONSTANTS can be set in UPPERCASE
 const productItems = document.querySelector("#product-items");
 const cartOverlay = document.querySelector(".cart-overlay");
 const cartContent = document.querySelector("#cartContent");
 const cartToggleOpen = document.querySelector("#cart-toggle");
 const cartToggleClose = document.querySelector("#closeCart");
-// console.log(productItems);
+// buscar
+const inputBuscar = document.getElementById("inputBuscar");
+const carouselItems = document.querySelector("#discountProducts");
+
 const getHeaders = () => {
   return {
     Accept: "application/json",
@@ -31,42 +34,163 @@ const getProducts = async () => {
   }
 };
 
+// searching product with input
+const productSearching = () => {
+  inputBuscar.addEventListener("keyup", (e) => {
+    let texto = e.target.value;
+    console.log(texto);
+
+    let er = new RegExp(texto, "i");
+
+    for (let i = 0; i < productItems.children.length; i++) {
+      let product = productItems.children[i];
+      let name = product.querySelector("h5").innerText;
+      if (!er.test(name)) {
+        product.classList.add("d-none");
+      } else {
+        product.classList.remove("d-none");
+      }
+    }
+  });
+};
+
+productSearching();
+
+const setupPagination = () => {
+  //pagination
+  const pagination = document.querySelector(".custom-pagination");
+  const products = JSON.parse(localStorage.getItem("products"));
+  const productsPerPage = 6;
+  const totalPages = Math.ceil(products.length / productsPerPage);
+  const pageButtonsContainer = document.createElement("div");
+  pageButtonsContainer.classList.add("pagination");
+
+  pagination.appendChild(pageButtonsContainer);
+
+  for (let i = 0; i < totalPages; i++) {
+    const test = document.createElement("li");
+    test.classList.add("page-item");
+    const button = document.createElement("a");
+    button.classList.add("page-link");
+    button.innerText = i + 1;
+    pageButtonsContainer.appendChild(button);
+    // pageButtonsContainer.appendChild(button);
+  }
+  const buttons = pageButtonsContainer.querySelectorAll("a");
+  buttons[0].classList.add("active");
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener("click", (e) => {
+      for (let i = 0; i < buttons.length; i++) {
+        buttons[i].classList.remove("active");
+      }
+      e.target.classList.add("active");
+      const page = e.target.innerText;
+      const start = (page - 1) * productsPerPage;
+      const end = page * productsPerPage;
+      for (let i = 0; i < productItems.children.length; i++) {
+        const product = productItems.children[i];
+        if (i >= start && i < end) {
+          product.classList.remove("d-none");
+        } else {
+          product.classList.add("d-none");
+        }
+      }
+    });
+  }
+};
+
+setupPagination();
+
+const addDiscountProducts = () => {
+  let result = " ";
+  getProducts().then((products) => {
+    products.map(({ id, name, url_image, price, discount, category }) =>
+      discount > 1
+        ? (result += `
+        <div class="item">
+        ${
+          !url_image
+            ? ` <img src="static/media/images/product_notfound.png" class="img-promotion" alt="..."></img>`
+            : `<img src="${url_image}" class="img-promotion" alt="..."></img>`
+        }
+ 
+        <div class="card-body">
+  
+        <h5 class="card-title">${name}</h5>
+            <p class="card-price">$${price}</p>
+            ${
+              discount > 0
+                ? ` <p class="card-discount animate__animated animate__pulse animate__infinite">${discount}% OFF 🔥</p>`
+                : ""
+            }
+            <p class="card-category"> category <i class="fa-solid fa-angle-right me-2"></i> ${
+              category.name
+            }</p>
+            <div class="d-flex justify-content-end">
+            ${
+              !cart.some((product) => product.id == id)
+                ? ` <a id="addCartButton"  class="btn btn-c-add" onclick="addToCart(${id})">Add right now! 😍
+            </a>`
+                : ` <a id="addCartButton"  class="btn btn-c-add" onclick="addToCart(${id})">Already in cart!👌
+            </a>`
+            }
+               
+            </div>
+  
+              </div>
+          </div>
+       
+        
+
+        `)
+        : null
+    );
+    carouselItems.innerHTML = result;
+  });
+};
+addDiscountProducts();
+
 function renderProducts() {
   let result = " ";
-
   getProducts().then((products) => {
     products.map(
       ({ id, name, url_image, price, discount, category }) =>
         (result += `
-      <div class="col-4">
-      <div class="card mb-4">
-       ${
-         !url_image
-           ? ` <img src="static/media/images/product_notfound.png" class="card-img-top" alt="..."></img>`
-           : `<img src="${url_image}" class="card-img-top" alt="..."></img>`
-       }
-
-      <div class="card-body">
-
-      <h5 class="card-title">${name}</h5>
-          <p class="card-price">$${price}</p>
-          ${
-            discount > 0
-              ? ` <p class="card-discount animate__animated animate__pulse animate__infinite">${discount}% OFF 🔥</p>`
-              : ""
-          }
-          <p class="card-category"> category <i class="fa-solid fa-angle-right me-2"></i> ${
-            category.name
-          }</p>
-          <div class="d-flex justify-content-end">
-              <a id="addCartButton"  class="btn btn-c-add" onclick="addToCart(${id})">Add to cart <i class="fa-solid fa-cart-plus"></i>
-              </a>
-          </div>
-
+        <div class="col-4">
+        <div class="card mb-4">
+         ${
+           !url_image
+             ? ` <img src="static/media/images/product_notfound.png" class="card-img-top" alt="..."></img>`
+             : `<img src="${url_image}" class="card-img-top" alt="..."></img>`
+         }
+  
+        <div class="card-body">
+  
+        <h5 class="card-title">${name}</h5>
+            <p class="card-price">$${price}</p>
+            ${
+              discount > 0
+                ? ` <p class="card-discount animate__animated animate__pulse animate__infinite">${discount}% OFF 🔥</p>`
+                : ""
+            }
+            <p class="card-category"> category <i class="fa-solid fa-angle-right me-2"></i> ${
+              category.name
+            }</p>
+            <div class="d-flex justify-content-end">
+            ${
+              !cart.some((product) => product.id == id)
+                ? ` <a id="addCartButton"  class="btn btn-c-add" onclick="addToCart(${id})">Add to cart <i class="fa-solid fa-cart-plus"></i>
+            </a>`
+                : ` <a id="addCartButton"  class="btn btn-c-add" onclick="addToCart(${id})">in Cart <i class="fa-solid fa-cart-plus"></i>
+            </a>`
+            }
+               
             </div>
-        </div>
-        </div>
-          `)
+  
+              </div>
+          </div>
+          </div>
+            `)
     );
     productItems.innerHTML = result;
   });
@@ -76,8 +200,7 @@ renderProducts();
 
 //cart array
 let cart = JSON.parse(localStorage.getItem("cart"));
-
-//add to cart
+//add to carta
 const removeItemToCart = (id) => {
   console.log("clicked");
   //filter items in cart what do not match with the id param
@@ -85,11 +208,11 @@ const removeItemToCart = (id) => {
   updateCart();
 };
 const addToCart = (id) => {
-  // console.log(id);
   getProducts().then((products) => {
     if (cart.some((product) => product.id == id)) {
       changeQuantityUnits("plus", id);
     } else {
+      alert("product added to cart");
       const item = products.find((product) => product.id == id);
       console.log("adding producto to cart");
       cart.push({ ...item, quantity: 1 });
@@ -167,7 +290,6 @@ const renderCartItem = () => {
     `;
   });
 };
-
 const updateCart = () => {
   renderCartItem();
   renderSubTotal();
@@ -178,7 +300,6 @@ const updateCart = () => {
 };
 updateCart();
 //render cart Items
-
 const changeQuantityUnits = (action, id) => {
   cart = cart.map((item) => {
     let quantity = item.quantity;

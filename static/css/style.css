@@ -77,9 +77,6 @@ a.btn.btn-c-add {
   justify-content: center;
   padding-top: 10vh;
   padding-bottom: 10vh;
-  -webkit-box-shadow: 10px 10px 52px 0px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 10px 10px 52px 0px rgba(0, 0, 0, 0.75);
-  box-shadow: 10px 10px 52px 0px rgba(0, 0, 0, 0.75);
 }
 .content-carousel {
   display: flex;
@@ -87,7 +84,6 @@ a.btn.btn-c-add {
   width: 700px;
   background-color: aqua;
 }
-
 /* products_section */
 
 .products_section {
@@ -255,3 +251,33 @@ a.btn.btn-c-add {
 }
 
 /* end cart */
+/* pagination */
+.active {
+  background-color: var(--primaryColor);
+
+  cursor: pointer;
+}
+
+.page-link {
+  color: var(--secondaryColor);
+  text-decoration: none;
+}
+
+/* discount products */
+.discount {
+  overflow: auto;
+  white-space: nowrap;
+  width: auto;
+}
+
+.discount .item {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+}
+
+.img-promotion {
+  width: 100px;
+  height: 30%;
+}
