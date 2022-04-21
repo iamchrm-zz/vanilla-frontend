@@ -1,5 +1,9 @@
 # vanilla-frontend
 
+## Deployed at 
+
+ https://cerulean-gecko-3d7b4b.netlify.app/
+
 ## Preview
 # HOME PAGE
 ![This is an image](https://i.imgur.com/CIexWH1.png)
