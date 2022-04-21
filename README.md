@@ -16,3 +16,7 @@
 ## Second panel show products with pagination and search bar!
 
 ![This is an image](https://i.imgur.com/L0iwMBc.png)
+
+## panel show carts with price with and without discount!
+
+![This is an image](https://i.imgur.com/CkpW3cA.png)
